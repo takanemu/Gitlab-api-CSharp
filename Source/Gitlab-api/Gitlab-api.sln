@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Express 2012 for Windows Desktop
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gitlab-api", "Gitlab-api\Gitlab-api.csproj", "{46C4FF82-3091-4152-9839-D5770AD43AD0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gitlab.Api.Library", "Gitlab.Api.Library\Gitlab.Api.Library.csproj", "{19AEC1A0-9ACA-452B-83E9-204244EDDFEA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{46C4FF82-3091-4152-9839-D5770AD43AD0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46C4FF82-3091-4152-9839-D5770AD43AD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46C4FF82-3091-4152-9839-D5770AD43AD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46C4FF82-3091-4152-9839-D5770AD43AD0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19AEC1A0-9ACA-452B-83E9-204244EDDFEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19AEC1A0-9ACA-452B-83E9-204244EDDFEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19AEC1A0-9ACA-452B-83E9-204244EDDFEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19AEC1A0-9ACA-452B-83E9-204244EDDFEA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
