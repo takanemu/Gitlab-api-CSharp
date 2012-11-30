@@ -1,8 +1,17 @@
 ﻿<Window x:Class="Gitlab_api.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow"
+        Width="525"
+        Height="350">
     <Grid>
-        
+        <Button Width="75"
+                Height="32"
+                Margin="217,118,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Click="TestButtonClickHandler"
+                Content="Button" />
+
     </Grid>
 </Window>
