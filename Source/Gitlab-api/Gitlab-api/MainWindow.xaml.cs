@@ -35,6 +35,7 @@ namespace Gitlab_api
         {
             try
             {
+                /*
                 HttpClient client = new HttpClient();
 
                 HttpResponseMessage response = await client.GetAsync("http://192.168.11.47/api/v2/projects?private_token=5Bn5tKi3qsB87nwcKzNB");
@@ -42,22 +43,13 @@ namespace Gitlab_api
                 response.EnsureSuccessStatusCode();
 
                 string responseBody = await response.Content.ReadAsStringAsync();
+                */
 
-                var projects = DynamicJson.Parse(responseBody, System.Text.UTF8Encoding.UTF8);
-
-                foreach (var item in projects)
+                using (StreamReader r = new StreamReader(@"projects.json"))
                 {
+                    string responseBody = r.ReadLine();
 
-
-                    Console.WriteLine("id:" + item["id"]);
-                    Console.WriteLine("code:" + item.code);
-                    Console.WriteLine("name:" + item.name);
-                    //Console.WriteLine("description:" + item.description);
-                    //Console.WriteLine("path:" + item.path);
-                    //Console.WriteLine("default_branch:" + item.default_branch);
-                    
-                        
-                        
+                    List<Project> projects = ProjectsFactory.Create(responseBody);
                 }
             }
             catch (HttpRequestException ex)
