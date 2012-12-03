@@ -35,22 +35,27 @@ namespace Gitlab_api
         {
             try
             {
-                /*
+                
                 HttpClient client = new HttpClient();
 
-                HttpResponseMessage response = await client.GetAsync("http://192.168.11.47/api/v2/projects?private_token=5Bn5tKi3qsB87nwcKzNB");
+                //HttpResponseMessage response = await client.GetAsync("http://192.168.11.47/api/v2/projects?private_token=5Bn5tKi3qsB87nwcKzNB");
+                HttpResponseMessage response = await client.GetAsync("http://192.168.11.47/api/v2/users?page=1&per_page=30&private_token=5Bn5tKi3qsB87nwcKzNB");
 
                 response.EnsureSuccessStatusCode();
 
                 string responseBody = await response.Content.ReadAsStringAsync();
-                */
 
+                //List<Project> projects = ProjectsFactory.Create(responseBody);
+                List<User> users = UsersFactory.Create(responseBody);
+
+                /*
                 using (StreamReader r = new StreamReader(@"projects.json"))
                 {
                     string responseBody = r.ReadLine();
 
                     List<Project> projects = ProjectsFactory.Create(responseBody);
                 }
+                */
             }
             catch (HttpRequestException ex)
             {
