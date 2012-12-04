@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Gitlab.Api.Library
 {
-    public class ProjectsFactory
+    internal class ProjectsFactory
     {
-        public static List<Project> Create(string json)
+        internal static List<Project> Create(string json)
         {
             List<Project> list = new List<Project>();
             var projects = Codeplex.Data.DynamicJson.Parse(json, System.Text.UTF8Encoding.UTF8);

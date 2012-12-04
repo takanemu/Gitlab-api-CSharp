@@ -33,35 +33,29 @@ namespace Gitlab_api
 
         private async void TestButtonClickHandler(object sender, RoutedEventArgs e)
         {
-            try
+            Gitlab.Api.Library.Gitlab gitlab = new Gitlab.Api.Library.Gitlab("http://192.168.11.47", "5Bn5tKi3qsB87nwcKzNB");
+
+            gitlab.RequestProjects((List<Project> result) =>
             {
-                
-                HttpClient client = new HttpClient();
+                // プロジェクトリスト取得
+            });
 
-                //HttpResponseMessage response = await client.GetAsync("http://192.168.11.47/api/v2/projects?private_token=5Bn5tKi3qsB87nwcKzNB");
-                HttpResponseMessage response = await client.GetAsync("http://192.168.11.47/api/v2/users?page=1&per_page=30&private_token=5Bn5tKi3qsB87nwcKzNB");
-
-                response.EnsureSuccessStatusCode();
-
-                string responseBody = await response.Content.ReadAsStringAsync();
-
-                //List<Project> projects = ProjectsFactory.Create(responseBody);
-                List<User> users = UsersFactory.Create(responseBody);
-
-                /*
-                using (StreamReader r = new StreamReader(@"projects.json"))
-                {
-                    string responseBody = r.ReadLine();
-
-                    List<Project> projects = ProjectsFactory.Create(responseBody);
-                }
-                */
-            }
-            catch (HttpRequestException ex)
+            gitlab.RequestUsers((List<User> result) =>
             {
-                Console.WriteLine("\nException Caught!");
-                Console.WriteLine("Message :{0} ", ex.Message);
+                // プロジェクトリスト取得
+            });
+
+
+            //HttpResponseMessage response = await client.GetAsync("http://192.168.11.47/api/v2/users?page=1&per_page=30&private_token=5Bn5tKi3qsB87nwcKzNB");
+
+            /*
+            using (StreamReader r = new StreamReader(@"projects.json"))
+            {
+                string responseBody = r.ReadLine();
+
+                List<Project> projects = ProjectsFactory.Create(responseBody);
             }
+            */
         }
     }
 }

@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Gitlab.Api.Library
 {
-    public class OwnersFactory
+    internal class OwnersFactory
     {
-        public static Owner Create(dynamic json)
+        internal static Owner Create(dynamic json)
         {
             DateTime date = new DateTime();
             bool result = DateTime.TryParse(json.created_at, out date);

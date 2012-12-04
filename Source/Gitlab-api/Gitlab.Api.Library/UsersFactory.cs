@@ -7,9 +7,9 @@ namespace Gitlab.Api.Library
     using System.Text;
     using System.Threading.Tasks;
 
-    public class UsersFactory
+    internal class UsersFactory
     {
-        public static List<User> Create(string json)
+        internal static List<User> Create(string json)
         {
             List<User> list = new List<User>();
 
