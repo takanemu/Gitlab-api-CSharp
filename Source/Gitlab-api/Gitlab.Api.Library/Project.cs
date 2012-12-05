@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Gitlab.Api.Library
 {
+    /// <summary>
+    /// プロジェクトクラス
+    /// </summary>
     public class Project
     {
         public string Id { get; set; }

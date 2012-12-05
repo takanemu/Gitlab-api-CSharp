@@ -44,12 +44,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Author.cs" />
     <Compile Include="Gitlab.cs" />
+    <Compile Include="Issue.cs" />
     <Compile Include="Owner.cs" />
     <Compile Include="OwnersFactory.cs" />
     <Compile Include="Project.cs" />
     <Compile Include="ProjectsFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RepositoryBranche.cs" />
+    <Compile Include="RepositoryCommit.cs" />
+    <Compile Include="RepositoryTag.cs" />
+    <Compile Include="Session.cs" />
+    <Compile Include="SessionFactory.cs" />
+    <Compile Include="Snippet.cs" />
     <Compile Include="User.cs" />
     <Compile Include="UsersFactory.cs" />
   </ItemGroup>

@@ -18,6 +18,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.IO;
 using Codeplex.Data;
+using System.Runtime.InteropServices;
 
 namespace Gitlab_api
 {
@@ -33,20 +34,38 @@ namespace Gitlab_api
 
         private async void TestButtonClickHandler(object sender, RoutedEventArgs e)
         {
-            Gitlab.Api.Library.Gitlab gitlab = new Gitlab.Api.Library.Gitlab("http://192.168.11.47", "5Bn5tKi3qsB87nwcKzNB");
+            Gitlab.Api.Library.Gitlab gitlab = new Gitlab.Api.Library.Gitlab(this.url.Text);
 
-            gitlab.RequestProjects((List<Project> result) =>
+            gitlab.ErrorAction = (Exception exception) =>
+                {
+                    // TODO:例外発生時の処理
+                };
+
+            var ptr = Marshal.SecureStringToGlobalAllocUnicode(this.password.SecurePassword);
+
+            try
             {
-                // プロジェクトリスト取得
-            });
+                // セキュア文字列を平文へ変換
+                string password = Marshal.PtrToStringUni(ptr);
 
-            gitlab.RequestUsers((List<User> result) =>
+                // セッションの取得
+                gitlab.RequestSession(this.email.Text, password, (bool saccess) =>
+                {
+                    gitlab.RequestProjects((List<Project> result) =>
+                    {
+                        // プロジェクトリスト取得
+                    });
+
+                    gitlab.RequestUsers((List<User> result) =>
+                    {
+                        // プロジェクトリスト取得
+                    });
+                });
+            }
+            finally
             {
-                // プロジェクトリスト取得
-            });
-
-
-            //HttpResponseMessage response = await client.GetAsync("http://192.168.11.47/api/v2/users?page=1&per_page=30&private_token=5Bn5tKi3qsB87nwcKzNB");
+                Marshal.ZeroFreeGlobalAllocUnicode(ptr);
+            }
 
             /*
             using (StreamReader r = new StreamReader(@"projects.json"))

@@ -7,14 +7,16 @@ using System.Threading.Tasks;
 namespace Gitlab.Api.Library
 {
     /// <summary>
-    /// 所有者クラス
+    /// スニペットクラス
     /// </summary>
-    public class Owner
+    public class Snippet
     {
         public string Id { get; set; }
-        public string Email { get; set; }
-        public string Name { get; set; }
-        public bool Blocked { get; set; }
+        public string Title { get; set; }
+        public string FileName { get; set; }
+        public Author Author { get; set; }
+        public DateTime ExpiresAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
         public DateTime CreatedAt { get; set; }
     }
 }

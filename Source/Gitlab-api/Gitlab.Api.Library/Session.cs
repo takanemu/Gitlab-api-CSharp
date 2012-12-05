@@ -8,20 +8,15 @@ namespace Gitlab.Api.Library
     using System.Threading.Tasks;
 
     /// <summary>
-    /// ユーザークラス
+    /// セッションクラス
     /// </summary>
-    public class User
+    public class Session
     {
         public string Id { get; set; }
         public string Email { get; set; }
         public string Name { get; set; }
+        public string PrivateToken { get; set; }
         public bool Blocked { get; set; }
         public DateTime CreatedAt { get; set; }
-        public string Bio { get; set; }
-        public string Skype { get; set; }
-        public string Linkedin { get; set; }
-        public string Twitter { get; set; }
-        public bool DarkScheme { get; set; }
-        public int ThemeId { get; set; }
     }
 }

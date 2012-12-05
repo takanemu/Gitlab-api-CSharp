@@ -7,11 +7,24 @@
     <Grid>
         <Button Width="75"
                 Height="32"
-                Margin="217,118,0,0"
+                Margin="196,134,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
                 Click="TestButtonClickHandler"
                 Content="Button" />
-
+        <TextBox x:Name="email"
+                 Width="248"
+                 Height="23"
+                 Margin="23,51,0,0"
+                 HorizontalAlignment="Left"
+                 VerticalAlignment="Top"
+                 TextWrapping="Wrap" />
+        <PasswordBox x:Name="password"
+                     Width="248"
+                     Height="26"
+                     Margin="23,91,0,0"
+                     HorizontalAlignment="Left"
+                     VerticalAlignment="Top" />
+        <TextBox x:Name="url" HorizontalAlignment="Left" Height="23" Margin="23,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="248" Text="http://192.168.11.47"/>
     </Grid>
 </Window>

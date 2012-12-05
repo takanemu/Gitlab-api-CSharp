@@ -13,8 +13,20 @@ namespace Gitlab.Api.Library
     /// </summary>
     public class Gitlab
     {
+        /// <summary>
+        /// ホスト名
+        /// </summary>
         private string host;
+
+        /// <summary>
+        /// プライベートトークン
+        /// </summary>
         private string private_token;
+
+        /// <summary>
+        /// エラー通知アクション
+        /// </summary>
+        private Action<Exception> errorAction = null;
 
         /// <summary>
         /// コンストラクタ
@@ -23,10 +35,14 @@ namespace Gitlab.Api.Library
         {
         }
 
-        public Gitlab(string host, string private_token)
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="host">ホスト名</param>
+        /// <param name="private_token">プライベートトークン</param>
+        public Gitlab(string host)
         {
             this.host = host;
-            this.private_token = private_token;
         }
 
         /// <summary>
@@ -48,6 +64,66 @@ namespace Gitlab.Api.Library
             set
             {
                 this.private_token = value;
+            }
+        }
+
+        /// <summary>
+        /// エラー通知アクション
+        /// </summary>
+        public Action<Exception> ErrorAction
+        {
+            set
+            {
+                this.errorAction = value;
+            }
+        }
+
+        /// <summary>
+        /// セッションの取得
+        /// </summary>
+        /// <param name="email">電子メール</param>
+        /// <param name="password">パスワード</param>
+        /// <param name="result">完了コールバック関数</param>
+        public async void RequestSession(string email, string password, Action<bool> result)
+        {
+            try
+            {
+                HttpClient client = new HttpClient();
+
+                var content = new FormUrlEncodedContent(new Dictionary<string, string>
+                {
+                    { "email", email },
+                    { "password", password },
+                });
+
+                HttpResponseMessage response = await client.PostAsync(this.host + "/api/v2/session", content);
+
+                if (response.IsSuccessStatusCode == false)
+                {
+                    result(false);
+                }
+                string responseBody = response.Content.ReadAsStringAsync().Result;
+
+                Action action = () =>
+                {
+                    Session session = SessionFactory.Create(responseBody);
+
+                    // プライベートトークンの取得
+                    this.private_token = session.PrivateToken;
+
+                    result(true);
+                };
+
+                var task = Task.Factory.StartNew(action);
+            }
+            catch (HttpRequestException ex)
+            {
+                // 例外処理
+                if (this.errorAction != null)
+                {
+                    this.errorAction(ex);
+                }
+                result(false);
             }
         }
 
@@ -78,7 +154,11 @@ namespace Gitlab.Api.Library
             }
             catch (HttpRequestException ex)
             {
-                // TODO:例外処理
+                // 例外処理
+                if (this.errorAction != null)
+                {
+                    this.errorAction(ex);
+                }
             }
         }
 
@@ -109,7 +189,11 @@ namespace Gitlab.Api.Library
             }
             catch (HttpRequestException ex)
             {
-                // TODO:例外処理
+                // 例外処理
+                if (this.errorAction != null)
+                {
+                    this.errorAction(ex);
+                }
             }
         }
     }
