@@ -55,6 +55,7 @@
     <Compile Include="RepositoryBranche.cs" />
     <Compile Include="RepositoryCommit.cs" />
     <Compile Include="RepositoryTag.cs" />
+    <Compile Include="ResultMessage.cs" />
     <Compile Include="Session.cs" />
     <Compile Include="SessionFactory.cs" />
     <Compile Include="Snippet.cs" />

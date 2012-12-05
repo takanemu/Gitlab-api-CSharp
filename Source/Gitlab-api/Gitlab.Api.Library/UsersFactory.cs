@@ -9,7 +9,34 @@ namespace Gitlab.Api.Library
 
     internal class UsersFactory
     {
-        internal static List<User> Create(string json)
+        internal static User Create(string json)
+        {
+            var user = Codeplex.Data.DynamicJson.Parse(json, System.Text.UTF8Encoding.UTF8);
+
+            DateTime date = new DateTime();
+            DateTime.TryParse(user.created_at, out date);
+
+            int theme_id;
+            int.TryParse(((double)user.theme_id).ToString(), out theme_id);
+
+            User result = new User
+            {
+                Id = ((double)user.id).ToString(),
+                Email = user.email,
+                Name = user.name,
+                Blocked = user.blocked,
+                CreatedAt = date,
+                Bio = user.bio,
+                Skype = user.skype,
+                Linkedin = user.linkedin,
+                Twitter = user.twitter,
+                DarkScheme = user.dark_scheme,
+                ThemeId = theme_id,
+            };
+            return result;
+        }
+
+        internal static List<User> Creates(string json)
         {
             List<User> list = new List<User>();
 
