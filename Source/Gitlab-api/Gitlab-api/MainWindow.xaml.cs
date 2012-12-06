@@ -54,11 +54,13 @@ namespace Gitlab_api
                     gitlab.RequestProjects((List<Project> result) =>
                     {
                         // プロジェクトリスト取得
+                        this.ReadProject(gitlab, result[0].Id);
                     });
 
                     gitlab.RequestUsers((List<User> result) =>
                     {
-                        // プロジェクトリスト取得
+                        // ユーザーリスト取得
+                        this.ReadUser(gitlab, result[0].Id);
                     });
                 });
             }
@@ -66,15 +68,22 @@ namespace Gitlab_api
             {
                 Marshal.ZeroFreeGlobalAllocUnicode(ptr);
             }
+        }
 
-            /*
-            using (StreamReader r = new StreamReader(@"projects.json"))
-            {
-                string responseBody = r.ReadLine();
+        private void ReadProject(Gitlab.Api.Library.Gitlab gitlab, string id)
+        {
+            gitlab.RequestProject(id, (Project project) =>
+                {
+                    // プロジェクト情報取得
+                });
+        }
 
-                List<Project> projects = ProjectsFactory.Create(responseBody);
-            }
-            */
+        private void ReadUser(Gitlab.Api.Library.Gitlab gitlab, string id)
+        {
+            gitlab.RequestUser(id, (User user) =>
+                {
+                    // ユーザー情報取得
+                });
         }
     }
 }

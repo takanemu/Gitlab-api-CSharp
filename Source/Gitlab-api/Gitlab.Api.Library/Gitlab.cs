@@ -173,7 +173,7 @@ namespace Gitlab.Api.Library
             {
                 HttpClient client = new HttpClient();
 
-                HttpResponseMessage response = await client.GetAsync(this.host + "/api/v2/projects/:" + id + "?private_token=" + this.private_token);
+                HttpResponseMessage response = await client.GetAsync(this.host + "/api/v2/projects/" + id + "?private_token=" + this.private_token);
 
                 response.EnsureSuccessStatusCode();
 
@@ -326,7 +326,7 @@ namespace Gitlab.Api.Library
             {
                 HttpClient client = new HttpClient();
 
-                HttpResponseMessage response = await client.GetAsync(this.host + "/api/v2/users/:" + id + "?private_token=" + this.private_token);
+                HttpResponseMessage response = await client.GetAsync(this.host + "/api/v2/users/" + id + "?private_token=" + this.private_token);
 
                 response.EnsureSuccessStatusCode();
 
