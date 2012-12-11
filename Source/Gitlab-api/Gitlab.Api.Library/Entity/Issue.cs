@@ -1,5 +1,5 @@
 ﻿
-namespace Gitlab.Api.Library
+namespace Gitlab
 {
     using System;
     using System.Collections.Generic;

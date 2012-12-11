@@ -1,5 +1,4 @@
-﻿using Gitlab.Api.Library;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -19,6 +18,7 @@ using System.Runtime.Serialization.Json;
 using System.IO;
 using Codeplex.Data;
 using System.Runtime.InteropServices;
+using Gitlab;
 
 namespace Gitlab_api
 {
@@ -27,16 +27,18 @@ namespace Gitlab_api
     /// </summary>
     public partial class MainWindow : Window
     {
+        private Gitlab.Gitlab gitlab;
+
         public MainWindow()
         {
             InitializeComponent();
         }
 
-        private async void TestButtonClickHandler(object sender, RoutedEventArgs e)
+        private async void ConnectButtonClickHandler(object sender, RoutedEventArgs e)
         {
-            Gitlab.Api.Library.Gitlab gitlab = new Gitlab.Api.Library.Gitlab(this.url.Text);
+            this.gitlab = new Gitlab.Gitlab(this.url.Text);
 
-            gitlab.ErrorAction = (Exception exception) =>
+            this.gitlab.ErrorAction = (Exception exception) =>
                 {
                     // TODO:例外発生時の処理
                 };
@@ -49,20 +51,29 @@ namespace Gitlab_api
                 string password = Marshal.PtrToStringUni(ptr);
 
                 // セッションの取得
-                gitlab.RequestSession(this.email.Text, password, (bool saccess) =>
+                bool saccess = await this.gitlab.RequestSessionAsync(this.email.Text, password);
+
+                if (saccess)
                 {
-                    gitlab.RequestProjects((List<Project> result) =>
+                    List<Project> projects = await this.gitlab.RequestProjectsAsync();
+
+                    if (projects.Count > 0)
                     {
                         // プロジェクトリスト取得
-                        this.ReadProject(gitlab, result[0].Id);
-                    });
+                        this.ReadProject(projects[0].Id);
 
-                    gitlab.RequestUsers((List<User> result) =>
+                        // プロジェクトメンバーリスト取得
+                        this.ReadProjectMember(projects[0].Id);
+                    }
+
+                    List<User> users = await this.gitlab.RequestUsersAsync();
+
+                    if (users.Count > 0)
                     {
                         // ユーザーリスト取得
-                        this.ReadUser(gitlab, result[0].Id);
-                    });
-                });
+                        this.ReadUser(users[0].Id);
+                    }
+                }
             }
             finally
             {
@@ -70,20 +81,50 @@ namespace Gitlab_api
             }
         }
 
-        private void ReadProject(Gitlab.Api.Library.Gitlab gitlab, string id)
+        private async void ReadProject(string id)
         {
-            gitlab.RequestProject(id, (Project project) =>
-                {
-                    // プロジェクト情報取得
-                });
+            // プロジェクト情報取得
+            Project project = await this.gitlab.RequestProjectAsync(id);
         }
 
-        private void ReadUser(Gitlab.Api.Library.Gitlab gitlab, string id)
+        private async void ReadProjectMember(string id)
         {
-            gitlab.RequestUser(id, (User user) =>
-                {
-                    // ユーザー情報取得
-                });
+            List<ProjectTeamMember> members = await this.gitlab.RequestProjectTeamMember(id);
+        }
+
+        private async void ReadUser(string id)
+        {
+            // ユーザー情報取得
+            User user = await this.gitlab.RequestUserAsync(id);
+        }
+
+        /// <summary>
+        /// プロジェクトの作成
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void NewProjectHandler(object sender, RoutedEventArgs e)
+        {
+            bool result = await this.gitlab.CreateProjectAsync(
+                this.projectName.Text,
+                this.code.Text,
+                this.path.Text,
+                "description",
+                string.Empty,
+                null,
+                null,
+                null,
+                null);
+        }
+
+        /// <summary>
+        /// 鍵の追加
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void AddKeyClickHandler(object sender, RoutedEventArgs e)
+        {
+            bool result = await this.gitlab.AddSSHkeyAsync(this.keyTitle.Text, this.keyBody.Text);
         }
     }
 }

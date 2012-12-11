@@ -1,5 +1,5 @@
 ﻿
-namespace Gitlab.Api.Library
+namespace Gitlab
 {
     using System;
     using System.Collections.Generic;
@@ -8,14 +8,13 @@ namespace Gitlab.Api.Library
     using System.Threading.Tasks;
 
     /// <summary>
-    /// セッションクラス
+    /// 作成者クラス
     /// </summary>
-    public class Session
+    public class Author
     {
         public string Id { get; set; }
         public string Email { get; set; }
         public string Name { get; set; }
-        public string PrivateToken { get; set; }
         public bool Blocked { get; set; }
         public DateTime CreatedAt { get; set; }
     }

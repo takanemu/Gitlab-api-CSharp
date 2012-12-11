@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Gitlab.Api.Library
+namespace Gitlab
 {
-    public class RepositoryBranche
+    public class RepositoryTag
     {
     }
 }

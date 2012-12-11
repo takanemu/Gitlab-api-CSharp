@@ -1,5 +1,5 @@
 ﻿
-namespace Gitlab.Api.Library
+namespace Gitlab
 {
     using System;
     using System.Collections.Generic;
@@ -7,6 +7,9 @@ namespace Gitlab.Api.Library
     using System.Text;
     using System.Threading.Tasks;
 
+    /// <summary>
+    /// 
+    /// </summary>
     internal class UsersFactory
     {
         internal static User Create(string json)

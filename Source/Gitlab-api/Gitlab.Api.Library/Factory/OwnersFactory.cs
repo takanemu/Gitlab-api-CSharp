@@ -1,11 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Gitlab.Api.Library
+﻿
+namespace Gitlab
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+
+    /// <summary>
+    /// 
+    /// </summary>
     internal class OwnersFactory
     {
         internal static Owner Create(dynamic json)

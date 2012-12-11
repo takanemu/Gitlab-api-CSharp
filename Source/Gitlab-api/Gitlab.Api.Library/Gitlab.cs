@@ -1,5 +1,5 @@
 ﻿
-namespace Gitlab.Api.Library
+namespace Gitlab
 {
     using System;
     using System.Collections.Generic;
@@ -84,7 +84,8 @@ namespace Gitlab.Api.Library
         /// <param name="email">電子メール</param>
         /// <param name="password">パスワード</param>
         /// <param name="result">完了コールバック関数</param>
-        public async void RequestSession(string email, string password, Action<bool> result)
+        /// <returns>結果</returns>
+        public async Task<bool> RequestSessionAsync(string email, string password)
         {
             try
             {
@@ -100,39 +101,32 @@ namespace Gitlab.Api.Library
 
                 if (response.IsSuccessStatusCode == false)
                 {
-                    result(false);
+                    return false;
                 }
                 string responseBody = response.Content.ReadAsStringAsync().Result;
 
-                Action action = () =>
-                {
-                    Session session = SessionFactory.Create(responseBody);
+                Session session = SessionFactory.Create(responseBody);
 
-                    // プライベートトークンの取得
-                    this.private_token = session.PrivateToken;
-
-                    result(true);
-                };
-
-                var task = Task.Factory.StartNew(action);
+                // プライベートトークンの取得
+                this.private_token = session.PrivateToken;
             }
             catch (HttpRequestException ex)
             {
                 // 例外処理
-                if (this.errorAction != null)
-                {
-                    this.errorAction(ex);
-                }
-                result(false);
+                this.NotifyException(ex);
+                return false;
             }
+            return true;
         }
 
         /// <summary>
         /// プロジェクトリストの取得
         /// </summary>
-        /// <param name="result">結果</param>
-        public async void RequestProjects(Action<List<Project>> result)
+        /// <returns>プロジェクトリスト</returns>
+        public async Task<List<Project>> RequestProjectsAsync()
         {
+            List<Project> projects = new List<Project>();
+
             try
             {
                 HttpClient client = new HttpClient();
@@ -143,32 +137,25 @@ namespace Gitlab.Api.Library
 
                 string responseBody = await response.Content.ReadAsStringAsync();
 
-                Action action = () =>
-                {
-                    List<Project> projects = ProjectsFactory.Creates(responseBody);
-
-                    result(projects);
-                };
-
-                var task = Task.Factory.StartNew(action);
+                projects = ProjectsFactory.Creates(responseBody);
             }
             catch (HttpRequestException ex)
             {
                 // 例外処理
-                if (this.errorAction != null)
-                {
-                    this.errorAction(ex);
-                }
+                this.NotifyException(ex);
             }
+            return projects;
         }
 
         /// <summary>
         /// プロジェクトの取得
         /// </summary>
         /// <param name="id">プロジェクトID</param>
-        /// <param name="result">結果</param>
-        public async void RequestProject(string id, Action<Project> result)
+        /// <returns>プロジェクト情報</returns>
+        public async Task<Project> RequestProjectAsync(string id)
         {
+            Project project = null;
+
             try
             {
                 HttpClient client = new HttpClient();
@@ -179,23 +166,14 @@ namespace Gitlab.Api.Library
 
                 string responseBody = await response.Content.ReadAsStringAsync();
 
-                Action action = () =>
-                {
-                    Project project = ProjectsFactory.Create(responseBody);
-
-                    result(project);
-                };
-
-                var task = Task.Factory.StartNew(action);
+                project = ProjectsFactory.Create(responseBody);
             }
             catch (HttpRequestException ex)
             {
                 // 例外処理
-                if (this.errorAction != null)
-                {
-                    this.errorAction(ex);
-                }
+                this.NotifyException(ex);
             }
+            return project;
         }
 
         /// <summary>
@@ -211,7 +189,8 @@ namespace Gitlab.Api.Library
         /// <param name="merge_requests_enabled"></param>
         /// <param name="wiki_enabled"></param>
         /// <param name="result"></param>
-        public async void CreateProject(
+        /// <returns>結果</returns>
+        public async Task<bool> CreateProjectAsync(
             string name,
             string code,
             string path,
@@ -220,8 +199,7 @@ namespace Gitlab.Api.Library
             bool? issues_enabled,
             bool? wall_enabled,
             bool? merge_requests_enabled,
-            bool? wiki_enabled,
-            Action<bool> result)
+            bool? wiki_enabled)
         {
             try
             {
@@ -231,41 +209,96 @@ namespace Gitlab.Api.Library
                 {
                     { "name", name },
                 };
-
-                // TODO:option
-
-
+                
+                // option
+                if (!string.IsNullOrEmpty(code))
+                {
+                    dic.Add("code", code);
+                }
+                if (!string.IsNullOrEmpty(path))
+                {
+                    dic.Add("path", path);
+                }
+                if (!string.IsNullOrEmpty(description))
+                {
+                    dic.Add("description", description);
+                }
+                if (!string.IsNullOrEmpty(default_branch))
+                {
+                    dic.Add("default_branch", default_branch);
+                }
+                if (issues_enabled != null)
+                {
+                    dic.Add("issues_enabled", issues_enabled.ToString());
+                }
+                if (wall_enabled != null)
+                {
+                    dic.Add("wall_enabled", wall_enabled.ToString());
+                }
+                if (merge_requests_enabled != null)
+                {
+                    dic.Add("merge_requests_enabled", merge_requests_enabled.ToString());
+                }
+                if (wiki_enabled != null)
+                {
+                    dic.Add("wiki_enabled", wiki_enabled.ToString());
+                }
+                
                 var content = new FormUrlEncodedContent(dic);
 
-                HttpResponseMessage response = await client.PostAsync(this.host + "/api/v2/projects", content);
+                HttpResponseMessage response = await client.PostAsync(this.host + "/api/v2/projects?private_token=" + this.private_token, content);
 
-                if (response.IsSuccessStatusCode == false)
+                if (response.IsSuccessStatusCode && response.StatusCode == System.Net.HttpStatusCode.Created)
                 {
-                    result(false);
+                    //string responseBody = response.Content.ReadAsStringAsync().Result;
+                    return true;
                 }
-                string responseBody = response.Content.ReadAsStringAsync().Result;
-
-                Action action = () =>
+                else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
                 {
-                    Session session = SessionFactory.Create(responseBody);
-
-                    // プライベートトークンの取得
-                    this.private_token = session.PrivateToken;
-
-                    result(true);
-                };
-
-                var task = Task.Factory.StartNew(action);
+                    // 登録失敗
+                }
+                else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    // 権限なし
+                }
+                return false;
             }
             catch (HttpRequestException ex)
             {
                 // 例外処理
-                if (this.errorAction != null)
-                {
-                    this.errorAction(ex);
-                }
-                result(false);
+                this.NotifyException(ex);
+                return false;
             }
+            return true;
+        }
+
+        /// <summary>
+        /// チームメンバーリスト取得
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<List<ProjectTeamMember>> RequestProjectTeamMember(string id)
+        {
+            List<ProjectTeamMember> members = new List<ProjectTeamMember>();
+
+            try
+            {
+                HttpClient client = new HttpClient();
+
+                HttpResponseMessage response = await client.GetAsync(this.host + "/api/v2/projects/" + id + "/members?private_token=" + this.private_token);
+
+                response.EnsureSuccessStatusCode();
+
+                string responseBody = await response.Content.ReadAsStringAsync();
+
+                members = ProjectTeamMemberFactory.Creates(responseBody);
+            }
+            catch (HttpRequestException ex)
+            {
+                // 例外処理
+                this.NotifyException(ex);
+            }
+            return members;
         }
 
         // TODO:
@@ -283,9 +316,11 @@ namespace Gitlab.Api.Library
         /// <summary>
         /// ユーザーリストの取得
         /// </summary>
-        /// <param name="result">結果</param>
-        public async void RequestUsers(Action<List<User>> result)
+        /// <returns>ユーザーリスト</returns>
+        public async Task<List<User>> RequestUsersAsync()
         {
+            List<User> users = new List<User>();
+
             try
             {
                 HttpClient client = new HttpClient();
@@ -296,32 +331,25 @@ namespace Gitlab.Api.Library
 
                 string responseBody = await response.Content.ReadAsStringAsync();
 
-                Action action = () =>
-                {
-                    List<User> projects = UsersFactory.Creates(responseBody);
-
-                    result(projects);
-                };
-
-                var task = Task.Factory.StartNew(action);
+                users = UsersFactory.Creates(responseBody);
             }
             catch (HttpRequestException ex)
             {
                 // 例外処理
-                if (this.errorAction != null)
-                {
-                    this.errorAction(ex);
-                }
+                this.NotifyException(ex);
             }
+            return users;
         }
 
         /// <summary>
         /// ユーザーの取得
         /// </summary>
         /// <param name="id">ユーザーID</param>
-        /// <param name="result">結果</param>
-        public async void RequestUser(string id, Action<User> result)
+        /// <returns>結果</returns>
+        public async Task<User> RequestUserAsync(string id)
         {
+            User user = null;
+
             try
             {
                 HttpClient client = new HttpClient();
@@ -332,23 +360,14 @@ namespace Gitlab.Api.Library
 
                 string responseBody = await response.Content.ReadAsStringAsync();
 
-                Action action = () =>
-                {
-                    User user = UsersFactory.Create(responseBody);
-
-                    result(user);
-                };
-
-                var task = Task.Factory.StartNew(action);
+                user = UsersFactory.Create(responseBody);
             }
             catch (HttpRequestException ex)
             {
                 // 例外処理
-                if (this.errorAction != null)
-                {
-                    this.errorAction(ex);
-                }
+                this.NotifyException(ex);
             }
+            return user;
         }
 
         /// <summary>
@@ -357,7 +376,7 @@ namespace Gitlab.Api.Library
         /// <param name="title">タイトル</param>
         /// <param name="key">鍵</param>
         /// <param name="result">結果</param>
-        public async void AddSSHkey(string title, string key, Action<bool> result)
+        public async Task<bool> AddSSHkeyAsync(string title, string key)
         {
             try
             {
@@ -369,35 +388,24 @@ namespace Gitlab.Api.Library
                     { "key", key },
                 });
 
-                HttpResponseMessage response = await client.PostAsync(this.host + "/api/v2/user/keys", content);
+                HttpResponseMessage response = await client.PostAsync(this.host + "/api/v2/user/keys?private_token=" + this.private_token, content);
 
-                if (response.IsSuccessStatusCode == false)
+                if (response.IsSuccessStatusCode && response.StatusCode == System.Net.HttpStatusCode.Created)
                 {
-                    result(false);
+                    //string responseBody = response.Content.ReadAsStringAsync().Result;
+                    return true;
                 }
-                string responseBody = response.Content.ReadAsStringAsync().Result;
-
-                Action action = () =>
+                else if(response.StatusCode == System.Net.HttpStatusCode.NotFound)
                 {
-                    ResultMessage message = ResultMessage.MessageFactory(responseBody);
-
-                    if (message.Message == "201 Created")
-                    {
-                        result(true);
-                    }
-                    result(false);
-                };
-
-                var task = Task.Factory.StartNew(action);
+                    // 登録失敗
+                }
+                return false;
             }
             catch (HttpRequestException ex)
             {
                 // 例外処理
-                if (this.errorAction != null)
-                {
-                    this.errorAction(ex);
-                }
-                result(false);
+                this.NotifyException(ex);
+                return false;
             }
         }
 
@@ -408,7 +416,13 @@ namespace Gitlab.Api.Library
         // Single SSH key
         // Delete SSH key
 
-
+        private void NotifyException(Exception exception)
+        {
+            if (this.errorAction != null)
+            {
+                this.errorAction(exception);
+            }
+        }
 
     }
 }
