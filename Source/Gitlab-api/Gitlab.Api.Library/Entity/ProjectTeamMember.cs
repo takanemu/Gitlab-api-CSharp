@@ -7,6 +7,9 @@ namespace Gitlab
     using System.Text;
     using System.Threading.Tasks;
 
+    /// <summary>
+    /// プロジェクトチームメンバークラス
+    /// </summary>
     public class ProjectTeamMember
     {
         public string Id { get; set; }

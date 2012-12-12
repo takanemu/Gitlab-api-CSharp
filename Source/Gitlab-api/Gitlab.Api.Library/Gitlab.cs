@@ -79,6 +79,39 @@ namespace Gitlab
         }
 
         /// <summary>
+        /// GET取得
+        /// </summary>
+        /// <param name="uri">アドレス</param>
+        /// <returns>JSON</returns>
+        private async Task<string> HttopGet(string uri)
+        {
+            HttpClient client = new HttpClient();
+
+            HttpResponseMessage response = await client.GetAsync(uri);
+
+            response.EnsureSuccessStatusCode();
+
+            string responseBody = await response.Content.ReadAsStringAsync();
+
+            return responseBody;
+        }
+
+        /// <summary>
+        /// POST取得
+        /// </summary>
+        /// <param name="uri">アドレス</param>
+        /// <param name="content">パラメーター</param>
+        /// <returns>HttpResponseMessage</returns>
+        private async Task<HttpResponseMessage> HttpPost(string uri, FormUrlEncodedContent content)
+        {
+            HttpClient client = new HttpClient();
+
+            HttpResponseMessage response = await client.PostAsync(uri, content);
+
+            return response;
+        }
+
+        /// <summary>
         /// セッションの取得
         /// </summary>
         /// <param name="email">電子メール</param>
@@ -89,15 +122,15 @@ namespace Gitlab
         {
             try
             {
-                HttpClient client = new HttpClient();
-
                 var content = new FormUrlEncodedContent(new Dictionary<string, string>
                 {
                     { "email", email },
                     { "password", password },
                 });
 
-                HttpResponseMessage response = await client.PostAsync(this.host + "/api/v2/session", content);
+                string uri = string.Format("{0}/api/v2/session", this.host);
+
+                HttpResponseMessage response = await this.HttpPost(uri, content);
 
                 if (response.IsSuccessStatusCode == false)
                 {
@@ -129,13 +162,9 @@ namespace Gitlab
 
             try
             {
-                HttpClient client = new HttpClient();
+                string uri = string.Format("{0}/api/v2/projects?private_token={1}", this.host, this.private_token);
 
-                HttpResponseMessage response = await client.GetAsync(this.host + "/api/v2/projects?private_token=" + this.private_token);
-
-                response.EnsureSuccessStatusCode();
-
-                string responseBody = await response.Content.ReadAsStringAsync();
+                string responseBody = await this.HttopGet(uri);
 
                 projects = ProjectsFactory.Creates(responseBody);
             }
@@ -158,13 +187,9 @@ namespace Gitlab
 
             try
             {
-                HttpClient client = new HttpClient();
+                string uri = string.Format("{0}/api/v2/projects/{1}?private_token={2}", this.host, id, this.private_token);
 
-                HttpResponseMessage response = await client.GetAsync(this.host + "/api/v2/projects/" + id + "?private_token=" + this.private_token);
-
-                response.EnsureSuccessStatusCode();
-
-                string responseBody = await response.Content.ReadAsStringAsync();
+                string responseBody = await this.HttopGet(uri);
 
                 project = ProjectsFactory.Create(responseBody);
             }
@@ -203,14 +228,12 @@ namespace Gitlab
         {
             try
             {
-                HttpClient client = new HttpClient();
-
                 var dic = new Dictionary<string, string>
                 {
                     { "name", name },
                 };
                 
-                // option
+                // オプション
                 if (!string.IsNullOrEmpty(code))
                 {
                     dic.Add("code", code);
@@ -243,14 +266,14 @@ namespace Gitlab
                 {
                     dic.Add("wiki_enabled", wiki_enabled.ToString());
                 }
-                
                 var content = new FormUrlEncodedContent(dic);
 
-                HttpResponseMessage response = await client.PostAsync(this.host + "/api/v2/projects?private_token=" + this.private_token, content);
+                string uri = string.Format("{0}/api/v2/projects?private_token={1}", this.host, this.private_token);
+
+                HttpResponseMessage response = await this.HttpPost(uri, content);
 
                 if (response.IsSuccessStatusCode && response.StatusCode == System.Net.HttpStatusCode.Created)
                 {
-                    //string responseBody = response.Content.ReadAsStringAsync().Result;
                     return true;
                 }
                 else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
@@ -269,27 +292,22 @@ namespace Gitlab
                 this.NotifyException(ex);
                 return false;
             }
-            return true;
         }
 
         /// <summary>
         /// チームメンバーリスト取得
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public async Task<List<ProjectTeamMember>> RequestProjectTeamMember(string id)
+        /// <param name="id">プロジェクトID</param>
+        /// <returns>チームメンバーリスト</returns>
+        public async Task<List<ProjectTeamMember>> RequestProjectTeamMembers(string id)
         {
             List<ProjectTeamMember> members = new List<ProjectTeamMember>();
 
             try
             {
-                HttpClient client = new HttpClient();
+                string uri = string.Format("{0}/api/v2/projects/{1}/members?private_token={2}", this.host, id, this.private_token);
 
-                HttpResponseMessage response = await client.GetAsync(this.host + "/api/v2/projects/" + id + "/members?private_token=" + this.private_token);
-
-                response.EnsureSuccessStatusCode();
-
-                string responseBody = await response.Content.ReadAsStringAsync();
+                string responseBody = await this.HttopGet(uri);
 
                 members = ProjectTeamMemberFactory.Creates(responseBody);
             }
@@ -301,8 +319,33 @@ namespace Gitlab
             return members;
         }
 
+        /// <summary>
+        /// チームメンバー取得
+        /// </summary>
+        /// <param name="projectId">プロジェクトID</param>
+        /// <param name="userId">ユーザーID</param>
+        /// <returns>チームメンバークラス</returns>
+        public async Task<ProjectTeamMember> RequestProjectTeamMember(string projectId, string userId)
+        {
+            ProjectTeamMember member = null;
+
+            try
+            {
+                string uri = string.Format("{0}/api/v2/projects/{1}/members/{2}?private_token={3}", this.host, projectId, userId, this.private_token);
+
+                string responseBody = await this.HttopGet(uri);
+
+                member = ProjectTeamMemberFactory.Create(responseBody);
+            }
+            catch (HttpRequestException ex)
+            {
+                // 例外処理
+                this.NotifyException(ex);
+            }
+            return member;
+        }
+
         // TODO:
-        // List project team members
         // Get project team member
         // Add project team member
         // Edit project team member
@@ -323,13 +366,9 @@ namespace Gitlab
 
             try
             {
-                HttpClient client = new HttpClient();
+                string uri = string.Format("{0}/api/v2/users?private_token={1}", this.host, this.private_token);
 
-                HttpResponseMessage response = await client.GetAsync(this.host + "/api/v2/users?private_token=" + this.private_token);
-
-                response.EnsureSuccessStatusCode();
-
-                string responseBody = await response.Content.ReadAsStringAsync();
+                string responseBody = await this.HttopGet(uri);
 
                 users = UsersFactory.Creates(responseBody);
             }
@@ -352,13 +391,9 @@ namespace Gitlab
 
             try
             {
-                HttpClient client = new HttpClient();
+                string uri = string.Format("{0}/api/v2/users/{1}?private_token={2}", this.host, id, this.private_token);
 
-                HttpResponseMessage response = await client.GetAsync(this.host + "/api/v2/users/" + id + "?private_token=" + this.private_token);
-
-                response.EnsureSuccessStatusCode();
-
-                string responseBody = await response.Content.ReadAsStringAsync();
+                string responseBody = await this.HttopGet(uri);
 
                 user = UsersFactory.Create(responseBody);
             }
@@ -380,15 +415,15 @@ namespace Gitlab
         {
             try
             {
-                HttpClient client = new HttpClient();
-
                 var content = new FormUrlEncodedContent(new Dictionary<string, string>
                 {
                     { "title", title },
                     { "key", key },
                 });
 
-                HttpResponseMessage response = await client.PostAsync(this.host + "/api/v2/user/keys?private_token=" + this.private_token, content);
+                string uri = string.Format("{0}/api/v2/user/keys?private_token={1}", this.host, this.private_token);
+
+                HttpResponseMessage response = await this.HttpPost(uri, content);
 
                 if (response.IsSuccessStatusCode && response.StatusCode == System.Net.HttpStatusCode.Created)
                 {

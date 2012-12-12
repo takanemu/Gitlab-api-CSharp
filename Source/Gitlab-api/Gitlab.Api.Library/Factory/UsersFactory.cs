@@ -8,67 +8,66 @@ namespace Gitlab
     using System.Threading.Tasks;
 
     /// <summary>
-    /// 
+    /// ユーザークラスファクトリー
     /// </summary>
     internal class UsersFactory
     {
-        internal static User Create(string json)
+        /// <summary>
+        /// インスタンスの生成
+        /// </summary>
+        /// <param name="json">JSONデータ</param>
+        /// <returns>インスタンス</returns>
+        private static User CreateInstance(dynamic json)
         {
-            var user = Codeplex.Data.DynamicJson.Parse(json, System.Text.UTF8Encoding.UTF8);
-
             DateTime date = new DateTime();
-            DateTime.TryParse(user.created_at, out date);
+            DateTime.TryParse(json.created_at, out date);
 
             int theme_id;
-            int.TryParse(((double)user.theme_id).ToString(), out theme_id);
+            int.TryParse(((double)json.theme_id).ToString(), out theme_id);
 
             User result = new User
             {
-                Id = ((double)user.id).ToString(),
-                Email = user.email,
-                Name = user.name,
-                Blocked = user.blocked,
+                Id = ((double)json.id).ToString(),
+                Email = json.email,
+                Name = json.name,
+                Blocked = json.blocked,
                 CreatedAt = date,
-                Bio = user.bio,
-                Skype = user.skype,
-                Linkedin = user.linkedin,
-                Twitter = user.twitter,
-                DarkScheme = user.dark_scheme,
+                Bio = json.bio,
+                Skype = json.skype,
+                Linkedin = json.linkedin,
+                Twitter = json.twitter,
+                DarkScheme = json.dark_scheme,
                 ThemeId = theme_id,
             };
             return result;
         }
 
+        /// <summary>
+        /// ユーザークラスの生成
+        /// </summary>
+        /// <param name="json">JSONデータ</param>
+        /// <returns>ユーザークラス</returns>
+        internal static User Create(string json)
+        {
+            var user = Codeplex.Data.DynamicJson.Parse(json, System.Text.UTF8Encoding.UTF8);
+
+            return UsersFactory.CreateInstance(user);
+        }
+
+        /// <summary>
+        /// ユーザークラスリストの生成
+        /// </summary>
+        /// <param name="json">JSONデータ</param>
+        /// <returns>ユーザークラス</returns>
         internal static List<User> Creates(string json)
         {
             List<User> list = new List<User>();
 
             var users = Codeplex.Data.DynamicJson.Parse(json, System.Text.UTF8Encoding.UTF8);
 
-            foreach (var item in users)
+            foreach (var user in users)
             {
-                DateTime date = new DateTime();
-                DateTime.TryParse(item.created_at, out date);
-
-                int theme_id;
-                int.TryParse(((double)item.theme_id).ToString(), out theme_id);
-
-                User user = new User
-                {
-                    Id = ((double)item.id).ToString(),
-                    Email = item.email,
-                    Name = item.name,
-                    Blocked = item.blocked,
-                    CreatedAt = date,
-                    Bio = item.bio,
-                    Skype = item.skype,
-                    Linkedin = item.linkedin,
-                    Twitter = item.twitter,
-                    DarkScheme = item.dark_scheme,
-                    ThemeId = theme_id,
-                };
-
-                list.Add(user);
+                list.Add(UsersFactory.CreateInstance(user));
             }
             return list;
         }

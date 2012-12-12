@@ -8,10 +8,15 @@ namespace Gitlab
     using System.Threading.Tasks;
 
     /// <summary>
-    /// 
+    /// セッションクラスファクトリー
     /// </summary>
     internal class SessionFactory
     {
+        /// <summary>
+        /// セッションクラスの生成
+        /// </summary>
+        /// <param name="json">JSONデータ</param>
+        /// <returns>セッションクラス</returns>
         internal static Session Create(string json)
         {
             var session = Codeplex.Data.DynamicJson.Parse(json, System.Text.UTF8Encoding.UTF8);

@@ -8,10 +8,15 @@ namespace Gitlab
     using System.Threading.Tasks;
 
     /// <summary>
-    /// 
+    /// 所有者ファクトリークラス
     /// </summary>
     internal class OwnersFactory
     {
+        /// <summary>
+        /// 所有者クラス生成
+        /// </summary>
+        /// <param name="json">JSONデータ</param>
+        /// <returns>所有者クラス</returns>
         internal static Owner Create(dynamic json)
         {
             DateTime date = new DateTime();

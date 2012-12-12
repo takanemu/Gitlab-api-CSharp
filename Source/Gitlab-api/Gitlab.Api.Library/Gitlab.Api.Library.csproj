@@ -57,7 +57,6 @@
     <Compile Include="Entity\RepositoryBranche.cs" />
     <Compile Include="Entity\RepositoryCommit.cs" />
     <Compile Include="Entity\RepositoryTag.cs" />
-    <Compile Include="Entity\ResultMessage.cs" />
     <Compile Include="Entity\Session.cs" />
     <Compile Include="Factory\SessionFactory.cs" />
     <Compile Include="Entity\Snippet.cs" />

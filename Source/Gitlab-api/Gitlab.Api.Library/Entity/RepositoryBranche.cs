@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Gitlab
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class RepositoryBranche
     {
     }

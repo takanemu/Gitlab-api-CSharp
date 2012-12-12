@@ -89,7 +89,7 @@ namespace Gitlab_api
 
         private async void ReadProjectMember(string id)
         {
-            List<ProjectTeamMember> members = await this.gitlab.RequestProjectTeamMember(id);
+            List<ProjectTeamMember> members = await this.gitlab.RequestProjectTeamMembers(id);
         }
 
         private async void ReadUser(string id)
