@@ -15,8 +15,8 @@ namespace Gitlab
         public string Id { get; set; }
         public string Email { get; set; }
         public string Name { get; set; }
-        public string PrivateToken { get; set; }
+        public string Private_token { get; set; }
         public bool Blocked { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public DateTime Created_at { get; set; }
     }
 }

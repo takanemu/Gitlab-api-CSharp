@@ -16,7 +16,7 @@ namespace Gitlab
         public string Email { get; set; }
         public string Name { get; set; }
         public bool Blocked { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public int AccessLevel { get; set; }
+        public DateTime Created_at { get; set; }
+        public int Access_level { get; set; }
     }
 }

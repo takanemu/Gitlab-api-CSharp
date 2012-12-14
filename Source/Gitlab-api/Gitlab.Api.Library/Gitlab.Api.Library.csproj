@@ -30,8 +30,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DynamicJson">
-      <HintPath>..\InfrastructureAssemblies\DynamicJson.dll</HintPath>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\InfrastructureAssemblies\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -45,6 +45,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Entity\Author.cs" />
+    <Compile Include="Entity\Commit.cs" />
+    <Compile Include="Entity\Committer.cs" />
+    <Compile Include="Entity\Parents.cs" />
     <Compile Include="Entity\ProjectTeamMember.cs" />
     <Compile Include="Factory\ProjectTeamMemberFactory.cs" />
     <Compile Include="Gitlab.cs" />

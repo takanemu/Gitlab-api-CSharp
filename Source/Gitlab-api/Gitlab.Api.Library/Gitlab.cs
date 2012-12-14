@@ -141,7 +141,7 @@ namespace Gitlab
                 Session session = SessionFactory.Create(responseBody);
 
                 // プライベートトークンの取得
-                this.private_token = session.PrivateToken;
+                this.private_token = session.Private_token;
             }
             catch (HttpRequestException ex)
             {

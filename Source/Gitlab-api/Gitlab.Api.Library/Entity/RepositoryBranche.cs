@@ -11,5 +11,10 @@ namespace Gitlab
     /// </summary>
     public class RepositoryBranche
     {
+        public string Name { get; set; }
+        public List<Commit> Commit { get; set; }
+        public Committer Committer { get; set; }
+        public DateTime Authored_date { get; set; }
+        public DateTime Committed_date { get; set; }
     }
 }

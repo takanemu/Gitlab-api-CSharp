@@ -16,13 +16,13 @@ namespace Gitlab
         public string Name { get; set; }
         public string Description { get; set; }
         public string Path { get; set; }
-        public string DefaultBranch { get; set; }
+        public string Default_branch { get; set; }
         public bool Private { get; set; }
-        public bool IssuesEnabled { get; set; }
-        public bool MergeRequestsEnabled { get; set; }
-        public bool WallEnabled { get; set; }
-        public bool WikiEnabled { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public bool Issues_enabled { get; set; }
+        public bool Merge_requests_enabled { get; set; }
+        public bool Wall_enabled { get; set; }
+        public bool Wiki_enabled { get; set; }
+        public DateTime Created_at { get; set; }
         public Owner Owner { get; set; }
     }
 }

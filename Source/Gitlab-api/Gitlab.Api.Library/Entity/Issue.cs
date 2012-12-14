@@ -13,7 +13,7 @@ namespace Gitlab
     public class Issue
     {
         public string Id { get; set; }
-        public string ProjectId { get; set; }
+        public string Project_id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public List<string> Labels { get; set; }
@@ -21,7 +21,7 @@ namespace Gitlab
         public string Assignee { get; set; }
         public Author Author { get; set; }
         public bool Closed { get; set; }
-        public DateTime UpdatedAt { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public DateTime Updated_at { get; set; }
+        public DateTime Created_at { get; set; }
     }
 }

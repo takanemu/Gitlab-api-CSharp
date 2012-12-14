@@ -15,8 +15,8 @@ namespace Gitlab
         public string Title { get; set; }
         public string FileName { get; set; }
         public Author Author { get; set; }
-        public DateTime ExpiresAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public DateTime Expires_at { get; set; }
+        public DateTime Updated_at { get; set; }
+        public DateTime Created_at { get; set; }
     }
 }
