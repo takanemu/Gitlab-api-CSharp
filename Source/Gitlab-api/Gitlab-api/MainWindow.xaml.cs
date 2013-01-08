@@ -16,7 +16,6 @@ using System.Windows.Shapes;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.IO;
-using Codeplex.Data;
 using System.Runtime.InteropServices;
 using Gitlab;
 
