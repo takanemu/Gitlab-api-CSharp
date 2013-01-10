@@ -31,15 +31,11 @@ namespace Gitlab
     /// </summary>
     public class Gitlab
     {
+        #region フィールド
         /// <summary>
         /// Uri prefix
         /// </summary>
         private const string URI_PREFIX = "{0}/api/";
-
-        /// <summary>
-        /// API Version
-        /// </summary>
-        private const string VERSION = "v3";
 
         /// <summary>
         /// ホスト名
@@ -55,12 +51,15 @@ namespace Gitlab
         /// エラー通知アクション
         /// </summary>
         private Action<Exception> errorAction = null;
+        #endregion
 
+        #region コンストラクタ
         /// <summary>
         /// コンストラクタ
         /// </summary>
         public Gitlab()
         {
+            this.ApiVersion = ApiVersionEnum.VERSION2;
         }
 
         /// <summary>
@@ -70,6 +69,8 @@ namespace Gitlab
         /// <param name="private_token">プライベートトークン</param>
         public Gitlab(string host)
         {
+            this.ApiVersion = ApiVersionEnum.VERSION2;
+
             try
             {
                 Uri uri = new Uri(host);
@@ -79,7 +80,9 @@ namespace Gitlab
             {
             }
         }
+        #endregion
 
+        #region プロパティ
         /// <summary>
         /// ホスト名
         /// </summary>
@@ -112,6 +115,23 @@ namespace Gitlab
                 this.errorAction = value;
             }
         }
+
+        /// <summary>
+        /// APIバージョン
+        /// </summary>
+        public ApiVersionEnum ApiVersion { get; set; }
+
+        /// <summary>
+        /// APIバージョンパス
+        /// </summary>
+        protected string Version
+        {
+            get
+            {
+                return this.ApiVersion == ApiVersionEnum.VERSION2 ? "v2" : "v3";
+            }
+        }
+        #endregion
 
         /// <summary>
         /// GET取得
@@ -163,7 +183,7 @@ namespace Gitlab
                     { "password", password },
                 });
 
-                string uri = string.Format(URI_PREFIX + VERSION + "/session", this.host);
+                string uri = string.Format(URI_PREFIX + this.Version + "/session", this.host);
 
                 HttpResponseMessage response = await this.HttpPost(uri, content);
 
@@ -197,7 +217,7 @@ namespace Gitlab
 
             try
             {
-                string uri = string.Format(URI_PREFIX + VERSION + "/projects?private_token={1}", this.host, this.private_token);
+                string uri = string.Format(URI_PREFIX + this.Version + "/projects?private_token={1}", this.host, this.private_token);
 
                 string responseBody = await this.HttopGet(uri);
 
@@ -222,7 +242,7 @@ namespace Gitlab
 
             try
             {
-                string uri = string.Format(URI_PREFIX + VERSION + "/projects/{1}?private_token={2}", this.host, id, this.private_token);
+                string uri = string.Format(URI_PREFIX + this.Version + "/projects/{1}?private_token={2}", this.host, id, this.private_token);
 
                 string responseBody = await this.HttopGet(uri);
 
@@ -303,7 +323,7 @@ namespace Gitlab
                 }
                 var content = new FormUrlEncodedContent(dic);
 
-                string uri = string.Format("{0}/api/" + VERSION + "/projects?private_token={1}", this.host, this.private_token);
+                string uri = string.Format("{0}/api/" + this.Version + "/projects?private_token={1}", this.host, this.private_token);
 
                 HttpResponseMessage response = await this.HttpPost(uri, content);
 
@@ -340,7 +360,7 @@ namespace Gitlab
 
             try
             {
-                string uri = string.Format(URI_PREFIX + VERSION + "/projects/{1}/members?private_token={2}", this.host, id, this.private_token);
+                string uri = string.Format(URI_PREFIX + this.Version + "/projects/{1}/members?private_token={2}", this.host, id, this.private_token);
 
                 string responseBody = await this.HttopGet(uri);
 
@@ -366,7 +386,7 @@ namespace Gitlab
 
             try
             {
-                string uri = string.Format(URI_PREFIX + VERSION + "/projects/{1}/members/{2}?private_token={3}", this.host, projectId, userId, this.private_token);
+                string uri = string.Format(URI_PREFIX + this.Version + "/projects/{1}/members/{2}?private_token={3}", this.host, projectId, userId, this.private_token);
 
                 string responseBody = await this.HttopGet(uri);
 
@@ -401,7 +421,7 @@ namespace Gitlab
 
             try
             {
-                string uri = string.Format(URI_PREFIX + VERSION + "/users?private_token={1}", this.host, this.private_token);
+                string uri = string.Format(URI_PREFIX + this.Version + "/users?private_token={1}", this.host, this.private_token);
 
                 string responseBody = await this.HttopGet(uri);
 
@@ -426,7 +446,7 @@ namespace Gitlab
 
             try
             {
-                string uri = string.Format(URI_PREFIX + VERSION + "/users/{1}?private_token={2}", this.host, id, this.private_token);
+                string uri = string.Format(URI_PREFIX + this.Version + "/users/{1}?private_token={2}", this.host, id, this.private_token);
 
                 string responseBody = await this.HttopGet(uri);
 
@@ -456,7 +476,7 @@ namespace Gitlab
                     { "key", key },
                 });
 
-                string uri = string.Format(URI_PREFIX + VERSION + "/user/keys?private_token={1}", this.host, this.private_token);
+                string uri = string.Format(URI_PREFIX + this.Version + "/user/keys?private_token={1}", this.host, this.private_token);
 
                 HttpResponseMessage response = await this.HttpPost(uri, content);
 
