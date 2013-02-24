@@ -35,7 +35,7 @@ namespace Gitlab
         /// <summary>
         /// Uri prefix
         /// </summary>
-        private const string URI_PREFIX = "{0}/api/";
+        private const string URI_PREFIX = "{0}api/";
 
         /// <summary>
         /// ホスト名
