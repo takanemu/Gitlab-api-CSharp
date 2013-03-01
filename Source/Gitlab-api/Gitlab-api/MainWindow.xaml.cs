@@ -37,6 +37,8 @@ namespace Gitlab_api
         {
             this.gitlab = new Gitlab.Gitlab(this.url.Text);
 
+            this.gitlab.ApiVersion = ApiVersionEnum.VERSION3;
+
             this.gitlab.ErrorAction = (Exception exception) =>
                 {
                     // TODO:例外発生時の処理

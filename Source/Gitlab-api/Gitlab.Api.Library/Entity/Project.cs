@@ -31,6 +31,7 @@ namespace Gitlab
         public string Name { get; set; }
         public string Description { get; set; }
         public string Path { get; set; }
+        public string Path_with_namespace { get; set; }
         public string Default_branch { get; set; }
         public bool Private { get; set; }
         public bool Issues_enabled { get; set; }
